@@ -29,16 +29,16 @@ module mlp #(
 ) (
     input clk, rst, valid,
     input signed [DATA_WIDTH-1:0] inputs  [INPUT_SIZE-1:0],
-    input signed [DATA_WIDTH-1:0] l1_weights [INPUT_SIZE-1:0] [HIDDEN_SIZE-1:0],
+    input signed [DATA_WIDTH-1:0] l1_weights [HIDDEN_SIZE-1:0] [INPUT_SIZE-1:0],
     input signed [OUTPUT_WIDTH-1:0] l1_bias [HIDDEN_SIZE-1:0],
     input signed [31:0] l1_m [HIDDEN_SIZE-1:0],
     input signed [31:0] l1_s [HIDDEN_SIZE-1:0],
-    input signed [DATA_WIDTH-1:0] l2_weights [HIDDEN_SIZE-1:0] [OUTPUT_SIZE-1:0],
+    input signed [DATA_WIDTH-1:0] l2_weights [OUTPUT_SIZE-1:0] [HIDDEN_SIZE-1:0],
     input signed [OUTPUT_WIDTH-1:0] l2_bias [OUTPUT_SIZE-1:0],
     input signed [31:0] l2_m [OUTPUT_SIZE-1:0],
     input signed [31:0] l2_s [OUTPUT_SIZE-1:0],
-    output reg signed [DATA_WIDTH-1:0] out [OUTPUT_SIZE-1:0],
-    output reg done
+    output signed [OUTPUT_WIDTH-1:0] out [OUTPUT_SIZE-1:0],
+    output done
 );
 
     wire signed [OUTPUT_WIDTH-1:0] l1_out [HIDDEN_SIZE-1:0];
@@ -53,9 +53,11 @@ module mlp #(
     wire signed [OUTPUT_WIDTH-1:0] l2_out [OUTPUT_SIZE-1:0];
     wire l2_done;
     
-    wire signed [DATA_WIDTH-1:0] l2_requant_out [OUTPUT_SIZE-1:0];
+    wire signed [OUTPUT_WIDTH-1:0] l2_requant_out [OUTPUT_SIZE-1:0];
     wire l2_requant_done;
     
+    assign done = l2_requant_done;
+    assign l2_requant_out = out;
     
     linear_layer #(
         .NUM_INPUTS(INPUT_SIZE),
@@ -85,7 +87,7 @@ module mlp #(
         .m(l1_m),
         .s(l1_s),
         .out(l1_requant_out),
-        .done(l1_requant_done),
+        .done(l1_requant_done)
     );
     
     relu #(
@@ -97,7 +99,7 @@ module mlp #(
         .valid(l1_requant_done),
         .inputs(l1_requant_out),
         .outputs(l1_act_out),
-        .done(l1_act_done),
+        .done(l1_act_done)
     );
     
     linear_layer #(
@@ -105,7 +107,7 @@ module mlp #(
         .NUM_OUTPUTS(OUTPUT_SIZE),
         .DATA_WIDTH(DATA_WIDTH),
         .OUTPUT_WIDTH(OUTPUT_WIDTH)
-    ) l1 (
+    ) l2 (
         .clk(clk),
         .rst(rst),
         .valid(l1_act_done),
@@ -118,17 +120,17 @@ module mlp #(
     
     requantize_layer #(
         .SIZE(OUTPUT_SIZE),
-        .DATA_WIDTH(DATA_WIDTH),
+        .DATA_WIDTH(OUTPUT_WIDTH),
         .OUTPUT_WIDTH(OUTPUT_WIDTH)
-    ) l1_requant (
+    ) l2_requant (
         .clk(clk),
         .rst(rst),
         .valid(l2_done),
         .inputs(l2_out),
         .m(l2_m),
         .s(l2_s),
-        .out(l2_requant_out),
-        .done(l2_requant_done),
+        .out(out),
+        .done(done)
     );
     
 endmodule

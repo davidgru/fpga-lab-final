@@ -28,7 +28,7 @@ module linear_layer #(
 ) (
     input clk, rst, valid,
     input signed [DATA_WIDTH-1:0] inputs  [NUM_INPUTS-1:0],
-    input signed [DATA_WIDTH-1:0] weights [NUM_INPUTS-1:0] [NUM_OUTPUTS-1:0],
+    input signed [DATA_WIDTH-1:0] weights [NUM_OUTPUTS-1:0] [NUM_INPUTS-1:0],
     input signed [OUTPUT_WIDTH-1:0] bias [NUM_OUTPUTS-1:0],
     output reg signed [OUTPUT_WIDTH-1:0] out [NUM_OUTPUTS-1:0],
     output reg done
@@ -51,7 +51,7 @@ module linear_layer #(
                 .weights(weights[i]),
                 .bias(bias[i]),
                 .out(out[i]),
-                .done(dones[0])
+                .done(dones[i])
             );
         end
     endgenerate

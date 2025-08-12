@@ -54,7 +54,7 @@ module requantize_layer #(
             done <= 0;
         end else begin
             for (int i = 0; i < SIZE; i++) begin
-                out[i] <= $signed(mult_done[i]) >> s[i];
+                out[i] <= $signed(mult_stage[i]) >> s[i];
             end
             done <= mult_done;
         end
