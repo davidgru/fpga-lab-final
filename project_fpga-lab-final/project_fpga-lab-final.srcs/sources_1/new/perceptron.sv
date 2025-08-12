@@ -19,8 +19,7 @@
 // 
 //////////////////////////////////////////////////////////////////////////////////
 
-
-module perceptron#(
+module perceptron #(
     parameter int DATA_WIDTH = 8,
     parameter int NUM_INPUTS = 8,
     parameter int OUTPUT_WIDTH = 32
@@ -28,7 +27,7 @@ module perceptron#(
     input clk, rst, valid,
     input signed [DATA_WIDTH-1:0] inputs  [NUM_INPUTS-1:0],
     input signed [DATA_WIDTH-1:0] weights [NUM_INPUTS-1:0],
-    input signed [DATA_WIDTH-1:0] bias,
+    input signed [OUTPUT_WIDTH-1:0] bias,
     output reg signed [OUTPUT_WIDTH-1:0] out,
     output reg done
 );
@@ -59,8 +58,8 @@ module perceptron#(
         for (genvar level = 1; level <= LEVELS; level = level + 1) begin: GEN_ADDER_TREE
             localparam num_adders = P2_NUM_INPUTS / (1 << level);
             
-            wire signed [SUM_WIDTH-1:0] prev_stage [2*num_adders-1:0] = stage_regs[2*P2_NUM_INPUTS - 4*num_adders +: 2*num_adders];
-            //wire signed [SUM_WIDTH-1:0] out_stage [num_adders-1:0] = stage_regs[2*P2_NUM_INPUTS - 2*num_adders +: num_adders];
+            wire signed [OUTPUT_WIDTH-1:0] prev_stage [2*num_adders-1:0] = stage_regs[2*P2_NUM_INPUTS - 4*num_adders +: 2*num_adders];
+            //wire signed [OUTPUT_WIDTH-1:0] out_stage [num_adders-1:0] = stage_regs[2*P2_NUM_INPUTS - 2*num_adders +: num_adders];
             
             always @(posedge clk) begin
                 if (rst == 1) begin
