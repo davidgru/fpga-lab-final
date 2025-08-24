@@ -1,0 +1,363 @@
+{
+  "design": {
+    "design_info": {
+      "boundary_crc": "0xCC6CFA539DDF0AAD",
+      "device": "xc7z020clg400-1",
+      "gen_directory": "../../../../project_fpga-lab-final.gen/sources_1/bd/design_gpio",
+      "name": "design_gpio",
+      "rev_ctrl_bd_flag": "RevCtrlBdOff",
+      "synth_flow_mode": "Hierarchical",
+      "tool_version": "2022.1",
+      "validated": "true"
+    },
+    "design_tree": {
+      "processing_system7_0": "",
+      "mlp_gpio_wrapper4_0": "",
+      "xlslice_0": "",
+      "xlslice_1": "",
+      "xlslice_2": "",
+      "xlconcat_0": ""
+    },
+    "interface_ports": {
+      "DDR": {
+        "mode": "Master",
+        "vlnv_bus_definition": "xilinx.com:interface:ddrx:1.0",
+        "vlnv": "xilinx.com:interface:ddrx_rtl:1.0",
+        "parameters": {
+          "AXI_ARBITRATION_SCHEME": {
+            "value": "TDM",
+            "value_src": "default"
+          },
+          "BURST_LENGTH": {
+            "value": "8",
+            "value_src": "default"
+          },
+          "CAN_DEBUG": {
+            "value": "false",
+            "value_src": "default"
+          },
+          "CAS_LATENCY": {
+            "value": "11",
+            "value_src": "default"
+          },
+          "CAS_WRITE_LATENCY": {
+            "value": "11",
+            "value_src": "default"
+          },
+          "CS_ENABLED": {
+            "value": "true",
+            "value_src": "default"
+          },
+          "DATA_MASK_ENABLED": {
+            "value": "true",
+            "value_src": "default"
+          },
+          "DATA_WIDTH": {
+            "value": "8",
+            "value_src": "default"
+          },
+          "MEMORY_TYPE": {
+            "value": "COMPONENTS",
+            "value_src": "default"
+          },
+          "MEM_ADDR_MAP": {
+            "value": "ROW_COLUMN_BANK",
+            "value_src": "default"
+          },
+          "SLOT": {
+            "value": "Single",
+            "value_src": "default"
+          },
+          "TIMEPERIOD_PS": {
+            "value": "1250",
+            "value_src": "default"
+          }
+        }
+      },
+      "FIXED_IO": {
+        "mode": "Master",
+        "vlnv_bus_definition": "xilinx.com:display_processing_system7:fixedio:1.0",
+        "vlnv": "xilinx.com:display_processing_system7:fixedio_rtl:1.0",
+        "parameters": {
+          "CAN_DEBUG": {
+            "value": "false",
+            "value_src": "default"
+          }
+        }
+      }
+    },
+    "components": {
+      "processing_system7_0": {
+        "vlnv": "xilinx.com:ip:processing_system7:5.5",
+        "xci_name": "design_gpio_processing_system7_0_0",
+        "xci_path": "ip/design_gpio_processing_system7_0_0/design_gpio_processing_system7_0_0.xci",
+        "inst_hier_path": "processing_system7_0",
+        "parameters": {
+          "PCW_EN_EMIO_GPIO": {
+            "value": "1"
+          },
+          "PCW_FPGA_FCLK0_ENABLE": {
+            "value": "1"
+          },
+          "PCW_GPIO_EMIO_GPIO_ENABLE": {
+            "value": "1"
+          },
+          "PCW_GPIO_EMIO_GPIO_IO": {
+            "value": "50"
+          },
+          "PCW_GPIO_EMIO_GPIO_WIDTH": {
+            "value": "50"
+          },
+          "PCW_USE_M_AXI_GP0": {
+            "value": "0"
+          }
+        }
+      },
+      "mlp_gpio_wrapper4_0": {
+        "vlnv": "xilinx.com:module_ref:mlp_gpio_wrapper4:1.0",
+        "xci_name": "design_gpio_mlp_gpio_wrapper4_0_0",
+        "xci_path": "ip/design_gpio_mlp_gpio_wrapper4_0_0/design_gpio_mlp_gpio_wrapper4_0_0.xci",
+        "inst_hier_path": "mlp_gpio_wrapper4_0",
+        "reference_info": {
+          "ref_type": "hdl",
+          "ref_name": "mlp_gpio_wrapper4",
+          "boundary_crc": "0x0"
+        },
+        "ports": {
+          "clk": {
+            "type": "clk",
+            "direction": "I",
+            "parameters": {
+              "ASSOCIATED_RESET": {
+                "value": "rst",
+                "value_src": "constant"
+              },
+              "FREQ_HZ": {
+                "value": "50000000",
+                "value_src": "user_prop"
+              },
+              "CLK_DOMAIN": {
+                "value": "design_gpio_processing_system7_0_0_FCLK_CLK0",
+                "value_src": "default_prop"
+              }
+            }
+          },
+          "rst": {
+            "type": "rst",
+            "direction": "I"
+          },
+          "in_read_addr": {
+            "direction": "O",
+            "left": "15",
+            "right": "0"
+          },
+          "in_write_addr": {
+            "direction": "I",
+            "left": "15",
+            "right": "0"
+          },
+          "in_data": {
+            "direction": "I",
+            "left": "7",
+            "right": "0"
+          },
+          "in_valid": {
+            "direction": "I"
+          },
+          "result": {
+            "direction": "O",
+            "left": "3",
+            "right": "0"
+          },
+          "done": {
+            "direction": "O"
+          },
+          "magic": {
+            "direction": "O",
+            "left": "3",
+            "right": "0"
+          }
+        }
+      },
+      "xlslice_0": {
+        "vlnv": "xilinx.com:ip:xlslice:1.0",
+        "xci_name": "design_gpio_xlslice_0_0",
+        "xci_path": "ip/design_gpio_xlslice_0_0/design_gpio_xlslice_0_0.xci",
+        "inst_hier_path": "xlslice_0",
+        "parameters": {
+          "DIN_FROM": {
+            "value": "33"
+          },
+          "DIN_TO": {
+            "value": "18"
+          },
+          "DIN_WIDTH": {
+            "value": "50"
+          },
+          "DOUT_WIDTH": {
+            "value": "16"
+          }
+        }
+      },
+      "xlslice_1": {
+        "vlnv": "xilinx.com:ip:xlslice:1.0",
+        "xci_name": "design_gpio_xlslice_1_0",
+        "xci_path": "ip/design_gpio_xlslice_1_0/design_gpio_xlslice_1_0.xci",
+        "inst_hier_path": "xlslice_1",
+        "parameters": {
+          "DIN_FROM": {
+            "value": "17"
+          },
+          "DIN_TO": {
+            "value": "10"
+          },
+          "DIN_WIDTH": {
+            "value": "50"
+          },
+          "DOUT_WIDTH": {
+            "value": "8"
+          }
+        }
+      },
+      "xlslice_2": {
+        "vlnv": "xilinx.com:ip:xlslice:1.0",
+        "xci_name": "design_gpio_xlslice_2_0",
+        "xci_path": "ip/design_gpio_xlslice_2_0/design_gpio_xlslice_2_0.xci",
+        "inst_hier_path": "xlslice_2",
+        "parameters": {
+          "DIN_FROM": {
+            "value": "9"
+          },
+          "DIN_TO": {
+            "value": "9"
+          },
+          "DIN_WIDTH": {
+            "value": "50"
+          },
+          "DOUT_WIDTH": {
+            "value": "1"
+          }
+        }
+      },
+      "xlconcat_0": {
+        "vlnv": "xilinx.com:ip:xlconcat:2.1",
+        "xci_name": "design_gpio_xlconcat_0_0",
+        "xci_path": "ip/design_gpio_xlconcat_0_0/design_gpio_xlconcat_0_0.xci",
+        "inst_hier_path": "xlconcat_0",
+        "parameters": {
+          "IN0_WIDTH": {
+            "value": "4"
+          },
+          "IN1_WIDTH": {
+            "value": "1"
+          },
+          "IN2_WIDTH": {
+            "value": "4"
+          },
+          "IN3_WIDTH": {
+            "value": "1"
+          },
+          "IN4_WIDTH": {
+            "value": "8"
+          },
+          "IN5_WIDTH": {
+            "value": "16"
+          },
+          "IN6_WIDTH": {
+            "value": "16"
+          },
+          "NUM_PORTS": {
+            "value": "7"
+          }
+        }
+      }
+    },
+    "interface_nets": {
+      "processing_system7_0_DDR": {
+        "interface_ports": [
+          "DDR",
+          "processing_system7_0/DDR"
+        ]
+      },
+      "processing_system7_0_FIXED_IO": {
+        "interface_ports": [
+          "FIXED_IO",
+          "processing_system7_0/FIXED_IO"
+        ]
+      }
+    },
+    "nets": {
+      "mlp_gpio_wrapper4_0_done": {
+        "ports": [
+          "mlp_gpio_wrapper4_0/done",
+          "xlconcat_0/In1"
+        ]
+      },
+      "mlp_gpio_wrapper4_0_in_read_addr": {
+        "ports": [
+          "mlp_gpio_wrapper4_0/in_read_addr",
+          "xlconcat_0/In6"
+        ]
+      },
+      "mlp_gpio_wrapper4_0_magic": {
+        "ports": [
+          "mlp_gpio_wrapper4_0/magic",
+          "xlconcat_0/In0"
+        ]
+      },
+      "mlp_gpio_wrapper4_0_result": {
+        "ports": [
+          "mlp_gpio_wrapper4_0/result",
+          "xlconcat_0/In2"
+        ]
+      },
+      "processing_system7_0_FCLK_CLK0": {
+        "ports": [
+          "processing_system7_0/FCLK_CLK0",
+          "mlp_gpio_wrapper4_0/clk"
+        ]
+      },
+      "processing_system7_0_FCLK_RESET0_N": {
+        "ports": [
+          "processing_system7_0/FCLK_RESET0_N",
+          "mlp_gpio_wrapper4_0/rst"
+        ]
+      },
+      "processing_system7_0_GPIO_O": {
+        "ports": [
+          "processing_system7_0/GPIO_O",
+          "xlslice_2/Din",
+          "xlslice_1/Din",
+          "xlslice_0/Din"
+        ]
+      },
+      "xlconcat_0_dout": {
+        "ports": [
+          "xlconcat_0/dout",
+          "processing_system7_0/GPIO_I"
+        ]
+      },
+      "xlslice_0_Dout": {
+        "ports": [
+          "xlslice_0/Dout",
+          "mlp_gpio_wrapper4_0/in_write_addr",
+          "xlconcat_0/In5"
+        ]
+      },
+      "xlslice_1_Dout": {
+        "ports": [
+          "xlslice_1/Dout",
+          "mlp_gpio_wrapper4_0/in_data",
+          "xlconcat_0/In4"
+        ]
+      },
+      "xlslice_2_Dout": {
+        "ports": [
+          "xlslice_2/Dout",
+          "mlp_gpio_wrapper4_0/in_valid",
+          "xlconcat_0/In3"
+        ]
+      }
+    }
+  }
+}

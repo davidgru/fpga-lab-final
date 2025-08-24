@@ -21,22 +21,22 @@ def make_hyperparams_for_layer(f, weights, spec):
     f.write(f"localparam int {spec}_NUM_OUTPUTS = {weights.shape[0]};\n")
 
 def write_params_for_layer(f, weights, bias, m, s, spec):
-    weight_str = f"localparam signed [D_WIDTH-1:0] {spec}_W [{spec}_NUM_OUTPUTS] [{spec}_NUM_INPUTS] = '{{\n"
+    weight_str = f"localparam logic signed [D_WIDTH-1:0] {spec}_W [{spec}_NUM_OUTPUTS] [{spec}_NUM_INPUTS] = '{{\n"
     weight_strs = []
     for row in weights:
         weight_strs.append('    {' + ','.join(str(x) for x in row) + '}')
     weight_str += ",\n".join(weight_strs) + "\n};\n"
     f.write(weight_str)
 
-    bias_str = f"localparam signed [O_WIDTH-1:0] {spec}_b [{spec}_NUM_OUTPUTS] = '{{\n"
+    bias_str = f"localparam logic signed [O_WIDTH-1:0] {spec}_b [{spec}_NUM_OUTPUTS] = '{{\n"
     bias_str += "    " + ','.join(str(x) for x in bias) + '\n};\n'
     f.write(bias_str)
 
-    m_str = f"localparam signed [31:0] {spec}_m [{spec}_NUM_OUTPUTS] = '{{\n"
+    m_str = f"localparam logic signed [31:0] {spec}_m [{spec}_NUM_OUTPUTS] = '{{\n"
     m_str += "    " + ','.join(str(x) for x in m) + '\n};\n'
     f.write(m_str)
 
-    s_str = f"localparam signed [31:0] {spec}_s [{spec}_NUM_OUTPUTS] = '{{\n"
+    s_str = f"localparam logic signed [31:0] {spec}_s [{spec}_NUM_OUTPUTS] = '{{\n"
     s_str += "    " + ','.join(str(x) for x in s) + '\n};\n'
     f.write(s_str)
 

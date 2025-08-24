@@ -49,12 +49,12 @@ QMAX = 127
 
 # ----------------- Model using Brevitas quant modules -----------------
 class BrevitasMLP(nn.Module):
-    def __init__(self, hidden=300, weight_bit_width=8, act_bit_width=8):
+    def __init__(self, hidden=150, weight_bit_width=8, act_bit_width=8):
         super().__init__()
         # QuantLinear uses fake quant during forward (QAT style)
         # We still keep bias as float parameters; we'll convert biases for integer inference on export.
         self.act1 = QuantIdentity(bit_width=act_bit_width, quant_type=QuantType.INT, return_quant_tensor=False)
-        self.fc1 = QuantLinear(28*28, hidden,
+        self.fc1 = QuantLinear(6*6, hidden,
                                bias=True,
                                weight_bit_width=weight_bit_width,
                                weight_quant_type=QuantType.INT)
@@ -114,7 +114,10 @@ def requantize_accumulator(acc: np.ndarray, M: np.ndarray, S: np.ndarray, out_dt
 def main():
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-    transform = transforms.Compose([transforms.ToTensor()])
+    transform = transforms.Compose([
+        transforms.Resize((6,6)),
+        transforms.ToTensor()
+    ])
     train_ds = datasets.MNIST('.', train=True, download=True, transform=transform)
     test_ds = datasets.MNIST('.', train=False, download=True, transform=transform)
 
@@ -123,7 +126,7 @@ def main():
     test_loader = DataLoader(test_ds, batch_size=256, shuffle=False, num_workers=2)
 
     # Instantiate model with brevitas
-    model = BrevitasMLP(hidden=300, weight_bit_width=8, act_bit_width=8).to(device)
+    model = BrevitasMLP(hidden=20, weight_bit_width=8, act_bit_width=8).to(device)
 
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.SGD(model.parameters(), lr=0.05, momentum=0.9)

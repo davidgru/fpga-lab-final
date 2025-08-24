@@ -75,7 +75,10 @@ def int_inference_batch(x_float_batch):
     return np.array(preds, dtype=np.int32)
 
 # Evaluate integer inference on a test subset
-transform = transforms.Compose([transforms.ToTensor()])
+transform = transforms.Compose([
+    transforms.Resize((6,6)),
+    transforms.ToTensor(),
+])
 test_ds = datasets.MNIST('.', train=False, download=True, transform=transform)
 test_loader_small = DataLoader(test_ds, batch_size=1, shuffle=False)
 all_preds = []

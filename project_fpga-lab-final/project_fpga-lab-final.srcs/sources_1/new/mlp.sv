@@ -20,26 +20,62 @@
 //////////////////////////////////////////////////////////////////////////////////
 import weights_pkg::*;
 
+module mlp_plain_v(
+    input clk, rst, valid,
+    input signed [36*8-1:0] inputs,
+    output signed [10*32-1:0] out,
+    output done
+);
+    wire signed [7:0] inputs_unpacked [35:0];
+    wire signed [31:0] outputs_unpacked [9:0];
+
+    // pack the input vector into the unpacked array
+    generate
+        for (genvar i = 0; i < 36; i = i + 1) begin : unpack_inputs
+            assign inputs_unpacked[35-i] = inputs[i*8 +: 8];
+        end
+    endgenerate
+
+    // pack the output array into a single vector
+    generate
+        for (genvar i = 0; i < 10; i = i + 1) begin : pack_outputs
+            assign out[i*32 +: 32] = outputs_unpacked[9-i];
+        end
+    endgenerate
+
+    mlp mlp_sv (
+        .clk(clk),
+        .valid(valid),
+        .rst(rst),
+        .inputs(inputs_unpacked),
+        .out(outputs_unpacked),
+        .done(done)
+    );
+endmodule
+
 module mlp #(
     parameter int DATA_WIDTH = 8,
     parameter int OUTPUT_WIDTH = 32,
-    parameter int INPUT_SIZE = 784,
-    parameter int HIDDEN_SIZE = 300,
+    parameter int INPUT_SIZE = 36,
+    parameter int HIDDEN_SIZE = 20,
     parameter int OUTPUT_SIZE = 10
 ) (
     input clk, rst, valid,
     input signed [DATA_WIDTH-1:0] inputs  [INPUT_SIZE-1:0],
-    input signed [DATA_WIDTH-1:0] l1_weights [HIDDEN_SIZE-1:0] [INPUT_SIZE-1:0],
-    input signed [OUTPUT_WIDTH-1:0] l1_bias [HIDDEN_SIZE-1:0],
-    input signed [31:0] l1_m [HIDDEN_SIZE-1:0],
-    input signed [31:0] l1_s [HIDDEN_SIZE-1:0],
-    input signed [DATA_WIDTH-1:0] l2_weights [OUTPUT_SIZE-1:0] [HIDDEN_SIZE-1:0],
-    input signed [OUTPUT_WIDTH-1:0] l2_bias [OUTPUT_SIZE-1:0],
-    input signed [31:0] l2_m [OUTPUT_SIZE-1:0],
-    input signed [31:0] l2_s [OUTPUT_SIZE-1:0],
     output signed [OUTPUT_WIDTH-1:0] out [OUTPUT_SIZE-1:0],
     output done
 );
+
+    // Parameters
+    reg signed [DATA_WIDTH-1:0] l1_weights [HIDDEN_SIZE-1:0] [INPUT_SIZE-1:0] = L1_W;
+    reg signed [OUTPUT_WIDTH-1:0] l1_bias [HIDDEN_SIZE-1:0] = L1_b;
+    reg signed [31:0] l1_m [HIDDEN_SIZE-1:0] = L1_m;
+    reg signed [31:0] l1_s [HIDDEN_SIZE-1:0] = L1_s;
+    reg signed [DATA_WIDTH-1:0] l2_weights [OUTPUT_SIZE-1:0] [HIDDEN_SIZE-1:0] = L2_W;
+    reg signed [OUTPUT_WIDTH-1:0] l2_bias [OUTPUT_SIZE-1:0] = L2_b;
+    reg signed [31:0] l2_m [OUTPUT_SIZE-1:0] = L2_m;
+    reg signed [31:0] l2_s [OUTPUT_SIZE-1:0] = L2_s;
+    
 
     wire signed [OUTPUT_WIDTH-1:0] l1_out [HIDDEN_SIZE-1:0];
     wire l1_done;
