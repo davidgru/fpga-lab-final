@@ -79,20 +79,24 @@ transform = transforms.Compose([
     transforms.Resize((6,6)),
     transforms.ToTensor(),
 ])
-test_ds = datasets.MNIST('.', train=False, download=True, transform=transform)
+test_ds = datasets.MNIST('.', train=False, download=True, transform=None)
+for i, x in enumerate(test_ds):
+    x[0].save(f'{i}.png')
+    if i > 10:
+        break
 test_loader_small = DataLoader(test_ds, batch_size=1, shuffle=False)
 all_preds = []
 all_labels = []
 seen = 0
 for x, y in test_loader_small:
     x_np = x.numpy()
-    preds = int_inference_batch(x_np)
-    all_preds.append(preds)
-    all_labels.append(y.numpy())
+    print(x)
+    # preds = int_inference_batch(x_np)
+    # all_preds.append(preds)
+    # all_labels.append(y.numpy())
     seen += x_np.shape[0]
-    # if seen >= test_samples:
-    #     break
-    break
+    if seen >= 10:
+        break
 all_preds = np.concatenate(all_preds, axis=0)
 all_labels = np.concatenate(all_labels, axis=0)
 acc_int = (all_preds == all_labels).mean()

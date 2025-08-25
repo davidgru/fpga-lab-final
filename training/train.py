@@ -38,12 +38,9 @@ from torch.utils.data import DataLoader
 from torchvision import datasets, transforms
 
 # Brevitas imports
-try:
-    import brevitas
-    from brevitas.nn import QuantLinear, QuantIdentity, QuantReLU, QuantHardTanh, QuantConv2d
-    from brevitas.core.quant import QuantType
-except Exception as e:
-    raise ImportError("This script requires brevitas. Install with `pip install brevitas`. Error: {}".format(e))
+import brevitas
+from brevitas.nn import QuantLinear, QuantIdentity, QuantReLU, QuantHardTanh, QuantConv2d
+from brevitas.core.quant import QuantType
 
 QMAX = 127
 
@@ -51,14 +48,11 @@ QMAX = 127
 class BrevitasMLP(nn.Module):
     def __init__(self, hidden=150, weight_bit_width=8, act_bit_width=8):
         super().__init__()
-        # QuantLinear uses fake quant during forward (QAT style)
-        # We still keep bias as float parameters; we'll convert biases for integer inference on export.
         self.act1 = QuantIdentity(bit_width=act_bit_width, quant_type=QuantType.INT, return_quant_tensor=False)
         self.fc1 = QuantLinear(6*6, hidden,
                                bias=True,
                                weight_bit_width=weight_bit_width,
                                weight_quant_type=QuantType.INT)
-        # Activation fake-quant (per-tensor symmetric)
         self.act2 = QuantReLU(bit_width=act_bit_width, quant_type=QuantType.INT, return_quant_tensor=False)
         self.fc2 = QuantLinear(hidden, 10,
                                bias=True,
@@ -67,7 +61,6 @@ class BrevitasMLP(nn.Module):
 
     def forward(self, x):
         x = x.view(x.size(0), -1)
-        # fake-quant input activation
         x = self.act1(x)
         x = self.fc1(x)
         x = self.act2(x)
@@ -77,7 +70,6 @@ class BrevitasMLP(nn.Module):
 # ----------------- Helpers for export / integer inference -----------------
 
 def compute_channelwise_weight_scale(weight: np.ndarray):
-    # weight: (out, in)
     max_per_channel = np.max(np.abs(weight), axis=1)
     max_per_channel[max_per_channel == 0.0] = 1e-8
     scales = max_per_channel / QMAX
@@ -85,7 +77,6 @@ def compute_channelwise_weight_scale(weight: np.ndarray):
 
 
 def make_fixed_point_multiplier(scale_ratio):
-    # scale_ratio: positive float mapping from accumulator scale -> target quantized scale
     if scale_ratio == 0:
         return 0, 0
     shift = 31
@@ -95,7 +86,6 @@ def make_fixed_point_multiplier(scale_ratio):
         shift -= 1
     return M, shift
 
-# integer-only matvec
 def int8_matvec(W_q: np.ndarray, a_q: np.ndarray, bias_q: np.ndarray):
     acc = W_q.astype(np.int32).dot(a_q.astype(np.int32))
     if bias_q is not None:
@@ -109,7 +99,6 @@ def requantize_accumulator(acc: np.ndarray, M: np.ndarray, S: np.ndarray, out_dt
         res = np.clip(res, -QMAX, QMAX).astype(np.int8)
     return res
 
-# ----------------- Training, export pipeline -----------------
 
 def main():
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -123,9 +112,7 @@ def main():
 
     train_loader = DataLoader(train_ds, batch_size=128, shuffle=True, num_workers=2)
     calib_loader = DataLoader(train_ds, batch_size=256, shuffle=True, num_workers=2)
-    test_loader = DataLoader(test_ds, batch_size=256, shuffle=False, num_workers=2)
 
-    # Instantiate model with brevitas
     model = BrevitasMLP(hidden=20, weight_bit_width=8, act_bit_width=8).to(device)
 
     criterion = nn.CrossEntropyLoss()
@@ -151,7 +138,6 @@ def main():
             total += y.size(0)
         print(f"Epoch {epoch+1}/{epochs} loss={running_loss/len(train_loader):.4f} acc={correct/total:.4f}")
 
-    # ------------------- Calibration / Export -------------------
     model.eval()
     # Extract FP weights and biases
     W1_fp = model.fc1.weight.detach().cpu().numpy().astype(np.float32)  # (300, 784)
@@ -165,9 +151,7 @@ def main():
     W1_q = np.round(W1_fp / W1_scales[:, None]).astype(np.int8)
     W2_q = np.round(W2_fp / W2_scales[:, None]).astype(np.int8)
 
-    # For activation scales: Brevitas QuantAct modules keep internal observer stats (if configured).
-    # To be robust we recompute activation ranges from calibration data using the trained model's forward up to each quant point.
-    # We'll compute the max-abs of inputs to fc1 (image) and inputs to fc2 (post-ReLU) over some calibration batches.
+    # Calibrate weight and activation scales
     act_max_fc1 = 0.0
     act_max_fc2 = 0.0
     nb_calib_batches = 100
@@ -222,7 +206,7 @@ def main():
              M_fc2=M_fc2, S_fc2=S_fc2)
     print('Saved quantized_model_brevitas.npz')
 
-    # ------------------ Integer-only reference inference ------------------
+    # Test inference
     data = np.load('quantized_model_brevitas.npz')
     W1_q = data['W1_q']
     b1_q = data['b1_q']
