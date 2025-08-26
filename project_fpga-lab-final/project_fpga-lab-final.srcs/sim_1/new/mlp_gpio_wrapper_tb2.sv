@@ -85,6 +85,8 @@ module mlp_gpio_wrapper_tb2();
         wait(done);
         $display("Prediction: %0u", result);
         
+        in_write_addr <= 0;
+        @(posedge clk);
         wait(in_read_addr == 0);
         // Send input over GPIO
         in_valid <= 1;

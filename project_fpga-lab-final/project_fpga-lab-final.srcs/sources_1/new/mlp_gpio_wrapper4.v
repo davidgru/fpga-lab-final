@@ -33,23 +33,22 @@ module argmax(
     
     always @(posedge clk) begin
         if (!rst) begin
-            done <= 0;
+            done <= 1;
             idx <= 0;
             max <= 0;
         end else begin
             if (valid == 1) begin
                 if (idx == 10) begin
                     done <= 1;
-                    idx <= 0;
                 end else begin
                     if ($signed(inputs[32*idx +: 32]) >= $signed(inputs[32*max +: 32])) begin
                         max <= idx;
                     end
                     idx <= idx + 1;
-                    done <= 0;
+                    done <= 1;
                 end
             end else begin
-                done <= 0;
+                done <= 1;
                 idx <= 0;
                 max <= 0;
             end
@@ -103,6 +102,7 @@ module mlp_gpio_wrapper4(
             mlp_in_valid <= 0;
             state <= 0;
             in_read_addr <= 0;
+            magic <= 4'b1010;
         end else begin
             case (state)
                 0: begin
@@ -111,19 +111,19 @@ module mlp_gpio_wrapper4(
                         in_read_addr <= in_read_addr + 1;
                     end
                     mlp_in_valid <= in_read_addr == 36;
-                    if (mlp_in_valid) begin
+                    if (in_read_addr == 36) begin
                         state <= 1;
                     end
                 end
                 1: begin
-                    if (done) begin
+                    if (done && (in_write_addr == 0)) begin
                         state <= 0;
                         in_read_addr <= 0;
                         mlp_in_valid <= 0;
                     end
                 end
             endcase
+            magic <= 4'b1111;
         end
-        magic <= 4'b1111;
     end
 endmodule
