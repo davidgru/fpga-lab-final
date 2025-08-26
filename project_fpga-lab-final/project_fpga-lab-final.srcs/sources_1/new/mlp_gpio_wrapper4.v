@@ -33,7 +33,7 @@ module argmax(
     
     always @(posedge clk) begin
         if (!rst) begin
-            done <= 1;
+            done <= 0;
             idx <= 0;
             max <= 0;
         end else begin
@@ -45,10 +45,10 @@ module argmax(
                         max <= idx;
                     end
                     idx <= idx + 1;
-                    done <= 1;
+                    done <= 0;
                 end
             end else begin
-                done <= 1;
+                done <= 0;
                 idx <= 0;
                 max <= 0;
             end
@@ -77,7 +77,7 @@ module mlp_gpio_wrapper4(
     mlp_plain_v mlp_inst (
         .clk(clk),
         .valid(mlp_in_valid),
-        .rst(~rstn),
+        .rst(~rst),
         .inputs(mlp_in),
         .out(mlp_out),
         .done(mlp_out_valid)
@@ -85,7 +85,7 @@ module mlp_gpio_wrapper4(
     
     argmax argmax_inst (
         .clk(clk),
-        .rst(rstn),
+        .rst(rst),
         .valid(mlp_out_valid),
         .inputs(mlp_out),
         .max(result),

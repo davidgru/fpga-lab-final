@@ -57,7 +57,7 @@ module mlp #(
     parameter int DATA_WIDTH = 8,
     parameter int OUTPUT_WIDTH = 32,
     parameter int INPUT_SIZE = 36,
-    parameter int HIDDEN_SIZE = 20,
+    parameter int HIDDEN_SIZE = 15,
     parameter int OUTPUT_SIZE = 10
 ) (
     input clk, rst, valid,

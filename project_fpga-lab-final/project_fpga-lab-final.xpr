@@ -3,7 +3,7 @@
 <!--                                                         -->
 <!-- Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.   -->
 
-<Project Version="7" Minor="60" Path="/home/david/projects/fpga-lab-final/project_fpga-lab-final/project_fpga-lab-final.xpr">
+<Project Version="7" Minor="60" Path="/home/dgruen/projects/fpga-lab-final/project_fpga-lab-final/project_fpga-lab-final.xpr">
   <DefaultLaunch Dir="$PRUNDIR"/>
   <Configuration>
     <Option Name="Id" Val="c83e8f26d7f34c94849caf1481e1f575"/>
@@ -60,7 +60,7 @@
     <Option Name="IPStaticSourceDir" Val="$PIPUSERFILESDIR/ipstatic"/>
     <Option Name="EnableBDX" Val="FALSE"/>
     <Option Name="DSABoardId" Val="pynq-z2"/>
-    <Option Name="WTXSimLaunchSim" Val="301"/>
+    <Option Name="WTXSimLaunchSim" Val="313"/>
     <Option Name="WTModelSimLaunchSim" Val="0"/>
     <Option Name="WTQuestaLaunchSim" Val="0"/>
     <Option Name="WTIesLaunchSim" Val="0"/>
@@ -146,11 +146,11 @@
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
-        <CompFileExtendedInfo CompFileName="design_gpio.bd" FileRelPathName="ip/design_gpio_processing_system7_0_0/design_gpio_processing_system7_0_0.xci">
-          <Proxy FileSetName="design_gpio_processing_system7_0_0"/>
-        </CompFileExtendedInfo>
         <CompFileExtendedInfo CompFileName="design_gpio.bd" FileRelPathName="ip/design_gpio_mlp_gpio_wrapper4_0_0/design_gpio_mlp_gpio_wrapper4_0_0.xci">
           <Proxy FileSetName="design_gpio_mlp_gpio_wrapper4_0_0"/>
+        </CompFileExtendedInfo>
+        <CompFileExtendedInfo CompFileName="design_gpio.bd" FileRelPathName="ip/design_gpio_processing_system7_0_0/design_gpio_processing_system7_0_0.xci">
+          <Proxy FileSetName="design_gpio_processing_system7_0_0"/>
         </CompFileExtendedInfo>
       </File>
       <File Path="$PGENDIR/sources_1/bd/design_gpio/hdl/design_gpio_wrapper.vhd">
@@ -188,7 +188,7 @@
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
-      <File Path="$PSRCDIR/sim_1/new/mlp_axi_wrapper_tb.sv">
+      <File Path="$PSRCDIR/sim_1/new/mlp_tb.sv">
         <FileInfo>
           <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
@@ -196,7 +196,7 @@
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
-      <File Path="$PSRCDIR/sim_1/new/mlp_tb.sv">
+      <File Path="$PSRCDIR/sim_1/new/mlp_axi_wrapper_tb.sv">
         <FileInfo>
           <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>

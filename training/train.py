@@ -113,7 +113,7 @@ def main():
     train_loader = DataLoader(train_ds, batch_size=128, shuffle=True, num_workers=2)
     calib_loader = DataLoader(train_ds, batch_size=256, shuffle=True, num_workers=2)
 
-    model = BrevitasMLP(hidden=20, weight_bit_width=8, act_bit_width=8).to(device)
+    model = BrevitasMLP(hidden=15, weight_bit_width=8, act_bit_width=8).to(device)
 
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.SGD(model.parameters(), lr=0.05, momentum=0.9)
